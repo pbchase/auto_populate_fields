@@ -1,11 +1,11 @@
 {
-    "name": "Auto Populate Fields",
-    "namespace": "AutoPopulateFields\\ExternalModule",
-    "description": "This module provides rich control of default values for data entry fields via a set of action tags. These action tags allow fields to be populated based on values from an ordered list of fields and static values. The fields can be read from the current event or the previous event in longitudinal projects. <strong><a href=\"https://github.com/ctsit/auto_populate_fields\">See full documentation here</a></strong>.",
-    "framework-version": 15,
+    "name": "Default From Query",
+    "namespace": "DefaultFromQuery\\ExternalModule",
+    "description": "Populates REDCap field default values by executing named SQL queries against the REDCap database. Queries are defined at the system level and referenced in field action tags as @DEFAULT-FROM-QUERY='query_name'.",
+    "framework-version": 16,
     "compatibility": {
-        "redcap-version-min": "14.0.2",
-        "php-version-min": "7.4.0"
+        "redcap-version-min": "14.6.4",
+        "php-version-min": "8.2.0"
     },
     "authors": [
         {
@@ -14,16 +14,38 @@
             "institution": "University of Florida - CTSI"
         }
     ],
-    "project-settings": [
+    "action-tags": [
         {
-            "key": "use_in_survey",
-            "name": "Enable Auto Populate Fields on survey pages",
-            "type": "checkbox"
-        },
+            "tag": "@DEFAULT-FROM-QUERY",
+            "description": "Sets a field's default value by executing a named SQL query stored in the module's system settings. The query must be associated with the current project and must return a single value. Usage: @DEFAULT-FROM-QUERY='query_name'"
+        }
+    ],
+    "system-settings": [
         {
-            "key": "chronological_previous_event",
-            "name": "Enable chronological previous event detection (useful when the events are not necessarily arranged in a chronological order)",
-            "type": "checkbox"
+            "key": "queries",
+            "name": "Queries",
+            "type": "sub_settings",
+            "repeatable": true,
+            "sub_settings": [
+                {
+                    "key": "query_name",
+                    "name": "Query Name",
+                    "type": "text",
+                    "required": true
+                },
+                {
+                    "key": "query_project_id",
+                    "name": "Project ID",
+                    "type": "project-id",
+                    "required": true
+                },
+                {
+                    "key": "query_sql",
+                    "name": "SQL",
+                    "type": "textarea",
+                    "required": true
+                }
+            ]
         }
     ]
 }

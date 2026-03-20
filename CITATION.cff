@@ -1,0 +1,62 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: REDCap Default From Query External Module
+message:
+  If you use this software, please cite it using the metadata
+  in CITATION.cff or https://doi.org/10.5281/zenodo.?????
+type: software
+authors:
+  - family-names: Chase
+    given-names: Philip B
+    email: pbc@ufl.edu
+    affiliation: University of Florida
+    orcid: https://orcid.org/0000-0002-5318-9420
+  - family-names: Stoffs
+    given-names: Taryn L
+    email: tls@ufl.edu
+    affiliation: University of Florida
+    orcid: https://orcid.org/0000-0002-0830-8179
+  - family-names: Moreno
+    given-names: Melissa
+    affiliation: University of Florida
+    orcid: https://orcid.org/0000-0003-0447-3270
+  - family-names: Bember
+    given-names: Tiago
+    affiliation: Howard Hughes Medical Institute
+  - family-names: Chesney
+    given-names: Kyle
+    affiliation: University of Florida
+    orcid: https://orcid.org/0000-0002-0479-7251
+  - family-names: Kamma
+    given-names: Sai Pavan
+    email: saipavankamma@ufl.edu
+    affiliation: University of Florida
+    orcid: https://orcid.org/0009-0004-4619-0409
+  - family-names: Bentz
+    given-names: Michael
+    affiliation: University of Florida
+    orcid: https://orcid.org/0000-0002-5790-4268
+repository-code:
+  https://github.com/ctsit/default_from_query/
+url:
+  https://github.com/ctsit/default_from_query/
+abstract:
+  Default From Query is a REDCap External Module that allows REDCap
+  fields to be auto-populated with values derived from SQL queries 
+  against REDCap's own database. Queries are defined by a system 
+  administrator at the system level and referenced by name from a 
+  field's action tag.
+keywords:
+  - redcap
+  - clinical science
+  - data management
+  - "redcap repo"
+  - "redcap external module"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.?????
+license: Apache-2.0
+version: 1.0.0
+date-released: '2026-03-??'

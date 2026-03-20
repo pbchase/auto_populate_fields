@@ -1,71 +1,116 @@
-# REDCap Auto-Populate Fields
+# Default From Query
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3561116.svg)](https://doi.org/10.5281/zenodo.3561116)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.?????.svg)](https://doi.org/10.5281/zenodo.?????)
 
-This REDCap module provides rich control of default values for data entry fields via a set of action tags. These action tags allow fields to be populated based on values from an ordered list of fields and static values. The fields can be read from the current event or the previous event in longitudinal projects.
+Default From Query is a REDCap External Module that allows REDCap fields to be auto-populated with values derived from SQL queries against REDCap's own database. Queries are defined by a system administrator at the system level and referenced by name from a field's action tag.
 
 ## Prerequisites
-- REDCap >= 14.0.2
-- PHP >= 7.4
+
+- REDCap >= 14.6.4
+- PHP >= 8.2.0
 
 ## Installation
-- Clone this repo into to `<redcap-root>/modules/auto_populate_fields_v2.2`.
-- Go to **Control Center > Manage External Modules** and enable Auto Populate Fields.
-- For each project you want to use this module, go to the project home page, click on **Manage External Modules** link, and then enable Auto Populate Fields for that project.
 
-## Features included
+- Obtain this module from the Consortium [REDCap Repo](https://redcap.vumc.edu/consortium/modules/index.php) from the control center.
+- Go to **Control Center > Manage External Modules** and enable Default From Query.
 
-### Default when visible
-By default, when a field that is hidden by branching logic contains a `@DEFAULT` action tag, an annoying alert is displayed on page load.
-> ERASE CURRENT VALUE OF FIELD "<field_name>"?
+The module operates at the system level; there is no per-project configuration.
 
-This module changes the default branching logic behavior in order to avoid that. Now, when some non-empty field gets hidden by branching logic, no more warning messages are shown - instead, the hidden value persists available until form submission, when it is finally erased.
+## Usage
 
-### Choice key piping on @DEFAULT
-This module changes the display of selection fields when they are referenced in `@DEFAULT` action tags - instead of the label, the key is returned. Example: let's say we have a dropdown field called `animals`, whose options are:
+### 1. Define a query (system administrator)
+
+In the REDCap Control Center, External Modules Management, locate the Default From Query module and access its configuration. Add one or more query entries. Each entry requires:
+
+| Field | Description |
+|-------|-------------|
+| **Query Name** | A short identifier used to reference this query in action tags |
+| **Project ID** | The REDCap project this query applies to |
+| **SQL** | A SQL statement that returns a single scalar value |
+
+### 2. Enable the module on a project where it is needed. 
+
+### 3. Within that project, in the project designer, reference the query by name in a field's action tag 
+
+In the Online Designer, add the following action tag to any field you want auto-populated:
+
 ```
-1,Lion
-2,Monkey
+@DEFAULT-FROM-QUERY='query_name'
 ```
-If we define somewhere `@DEFAULT="[animals]"`, the returned value will be `1` (instead of "Lion") or `2` (instead of "Monkey").
 
+where `query_name` matches the **Query Name** configured in system settings. When a user opens a data entry form for a record that has no existing data on that form, the module executes the associated query and injects the result as the field's default value.
 
-### New action tags
-This module provides 2 new [action tags](https://wiki.chpc.utah.edu/pages/viewpage.action?pageId=595001400):
+### Variable substitution in SQL
 
-#### @DEFAULT_\<N\>
-Provides the possibility to define secondary, tertiary, etc default values. If `@DEFAULT` returns an empty value, the next tag available - let's say `@DEFAULT_1` - is checked. If `@DEFAULT_1` returns empty, the next tag available - let's say `@DEFAULT_2` - is checked, and so on. This is useful when a fallback value is needed for piping (e.g. `@DEFAULT="[first_name]" @DEFAULT_1="Joe Doe"`).
+Queries may reference the following placeholders, which are substituted with the current context before execution:
 
-#### @DEFAULT-FROM-PREVIOUS-EVENT
-Sets a field's default value based on its own value in a previous event. To map the default value from another field, you may specify the source field name as a parameter to the action tag, e.g `@DEFAULT-FROM-PREVIOUS-EVENT="source_field"`. Analogously to `@DEFAULT_<N>`, `@DEFAULT-FROM-PREVIOUS-EVENT_<N>` is also provided.
+| Placeholder | Substituted with |
+|-------------|-----------------|
+| `[record_id]` | The current record ID |
+| `[project_id]` | The current project ID |
+| `[field_name]` | The name of the field being populated |
 
-If your events are not necessarily arranged in a chronological order, you can enable an option to auto-detect the last chronological event. To do that, go to your project page, then access External Modules (at the left sidebar), and then click on Auto Populate Fields configuration button:
+Example:
 
-![Default from previous event configuration](img/default_from_previous_event_config.png)
+```sql
+SELECT value
+FROM redcap_data
+WHERE project_id = [project_id]
+  AND record = [record_id]
+  AND field_name = [field_name]
+ORDER BY instance DESC
+LIMIT 1
+```
 
-### Mixing @DEFAULT_\<N\> and @DEFAULT-FROM-PREVIOUS-EVENT_\<N\>
+#### Caveats
 
-When using `@DEFAULT_<N>` and `@DEFAULT-FROM-PREVIOUS-EVENT_<N>` together, using unique numbers on each action tag to ensure the desired precedence. E.g.
+- Do not enclose any of these substitions with quotes or the query will fail and return to no value.
 
-    @DEFAULT-FROM-PREVIOUS-EVENT_1='initial_dose'
-    @DEFAULT-FROM-PREVIOUS-EVENT_2=intermediate_dose
-    @DEFAULT-FROM-PREVIOUS-EVENT_3="final_dose"
-    @DEFAULT_4="7"
+```sql
+SELECT value
+FROM redcap_data
+WHERE project_id = [project_id]
+  AND record = '[record_id]' -- this will fail!
+  AND field_name = '[field_name]' -- this will also fail!
+ORDER BY instance DESC
+LIMIT 1
+```
 
-In the above example `initial_dose` from the previous event will be used. Lacking that, `intermediate_dose` will be used. If none of `initial_dose`, `intermediate_dose`, and `final_dose` have been set, the value of 7 will be used.
+- `record` and `field_name` _must_ be wrapped in quotes if you are _not_ using the substition value for that column value.
 
-Note that `@DEFAULT` is synonymous with `@DEFAULT_0`.  Similarly `@DEFAULT-FROM-PREVIOUS-EVENT` is synonymous with `@DEFAULT-FROM-PREVIOUS-EVENT_0`.
+```sql
+SELECT value
+FROM redcap_data
+WHERE project_id = [project_id]
+  AND record = [record_id]
+  AND field_name = 'some_other_field' -- Quotes are required in this context
+ORDER BY instance DESC
+LIMIT 1
+```
 
-Note that the square brackets, `[]` common to REDCap piping are neither required nor supported in `@DEFAULT-FROM-PREVIOUS-EVENT` and `@DEFAULT-FROM-PREVIOUS-EVENT_<N>`. They _are_ required in `@DEFAULT_<N>` just like `@DEFAULT`.
+- If your query needs to query multiple project_ids, record_ids or field_names, you will need to hard-code some of those values. The substition values will always be in the context of the project, field, and record of the form as it is opened on the data entry page. If different things are needed to query the different projects, you will need to manage those differences as you write the query.
 
-## Considerations
+```sql
+select coalesce(max(max_visitnum) + 1, 1) as next_visitnum
+from (
+        (
+            select max(cast(value as SIGNED)) as max_visitnum
+            from redcap_data
+            where project_id = 123 -- the project_ids do not match so hardcode them
+                and field_name = [field_name]
+                and record = [record_id] -- when you need only the value provided by the substitution, you can use it.
+        )
+        union
+        (
+            select max(cast(value as SIGNED)) as max_visitnum
+            from redcap_data4
+            where project_id = 456 -- the project_ids do not match so hardcode them
+                and field_name = [field_name]
+                and record = [record_id]
+        )
+    ) as dummy;
+```
 
-Please note that when using **Enable chronological previous event detection**, deleting data from a form might change the expected behavior of auto-population. 
+## License
 
-Though the data is erased, the null value written to the record is still a legitimate value that could be copied to next event filled in. This will only occur in new data entry if the last event in the sequence was deleted. Note that "sequence" here refers to chronological order.
-
-For example, if data is keyed into the _wrong_ event and deleted, the data will not auto-populate when the correct event is opened. That said, if you open the correct event _before_ deleting the data from the wrong event, the data keyed into the wrong event will auto-populate into the correct event. 
-
-## Example
-
-An example project that demonstrates some of the features of this module is available in the [examples](examples/) folder.
+Apache 2.0 — see [LICENSE](LICENSE).
