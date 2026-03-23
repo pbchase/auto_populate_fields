@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **REDCap External Module** ("Default From Query", v1.0.0) that allows REDCap fields to be auto-populated with values derived from SQL queries against REDCap's own database. Queries are defined by a system administrator at the system level and referenced by name from a field's action tag.
 
-- **Namespace:** `UF_CTSI\ExternalModule`
+- **Namespace:** `UF_CTSI\DefaultFromQuery`
 - **Framework version:** 15
 - **Requires:** REDCap >= 14.0.2, PHP >= 7.4
 

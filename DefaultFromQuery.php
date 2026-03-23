@@ -5,7 +5,7 @@
  * Provides ExternalModule class for Default From Query.
  */
 
-namespace UF_CTSI\ExternalModule;
+namespace UF_CTSI\DefaultFromQuery;
 
 use ExternalModules\AbstractExternalModule;
 use Form;
@@ -14,7 +14,7 @@ use Records;
 /**
  * ExternalModule class for Default From Query.
  */
-class ExternalModule extends AbstractExternalModule
+class DefaultFromQuery extends AbstractExternalModule
 {
     /**
      * @inheritdoc
