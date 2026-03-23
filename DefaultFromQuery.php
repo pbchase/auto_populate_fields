@@ -55,12 +55,17 @@ class DefaultFromQuery extends AbstractExternalModule
                 continue;
             }
 
-            $sql = $this->getQueryByName($query_name);
-            if ($sql === null) {
+            $query = $this->getQueryByName($query_name);
+            if ($query === null) {
                 continue;
             }
 
-            [$sql, $params] = $this->pipeSqlVariables($sql, $project_id, $field_name, $_GET['id']);
+            $pids = [
+                'pid1' => $query['pid1'] ?? null,
+                'pid2' => $query['pid2'] ?? null,
+                'pid3' => $query['pid3'] ?? null,
+            ];
+            [$sql, $params] = $this->pipeSqlVariables($query['query_sql'], $project_id, $field_name, $_GET['id'], $pids);
             $value = $this->executeQuery($sql, $params);
             if ($value === null) {
                 continue;
@@ -71,17 +76,17 @@ class DefaultFromQuery extends AbstractExternalModule
     }
 
     /**
-     * Looks up the SQL for a named query associated with a project.
+     * Looks up a named query entry from project settings.
      *
      * @param string $query_name
-     * @return string|null The SQL string, or null if not found.
+     * @return array|null The query settings array, or null if not found.
      */
     function getQueryByName($query_name)
     {
         $queries = $this->getSubSettings('queries');
         foreach ($queries as $query) {
             if ($query['query_name'] === $query_name) {
-                return $query['query_sql'];
+                return $query;
             }
         }
         return null;
@@ -97,29 +102,39 @@ class DefaultFromQuery extends AbstractExternalModule
      * placeholder is an exception: it is substituted directly as a table name
      * and cannot be bound as a parameter.
      *
-     * Supported placeholders: [record_id], [project_id], [field_name], [data-table].
+     * Supported placeholders: [record_id], [project_id], [field_name],
+     * [pid1], [pid2], [pid3], [data-table], [data-table:pid1],
+     * [data-table:pid2], [data-table:pid3].
      *
      * @param string $sql        The raw SQL string containing placeholders.
      * @param int    $project_id The current REDCap project ID.
      * @param string $field_name The field name being processed.
      * @param string $record_id  The current record ID (from $_GET['id']).
+     * @param array  $pids       Optional map of pid1/pid2/pid3 to project IDs.
      * @return array{0: string, 1: array} A tuple of [piped SQL, bound values].
      */
-    function pipeSqlVariables($sql, $project_id, $field_name, $record_id)
+    function pipeSqlVariables($sql, $project_id, $field_name, $record_id, $pids = [])
     {
-        // [data-table] is a table name and cannot be a bound parameter, so
-        // substitute it directly before building the prepared statement.
+        // Table names cannot be bound parameters; substitute them directly.
         $sql = str_replace('[data-table]', $this->getDataTable($project_id), $sql);
+        foreach (['pid1', 'pid2', 'pid3'] as $key) {
+            if (!empty($pids[$key])) {
+                $sql = str_replace("[data-table:$key]", $this->getDataTable($pids[$key]), $sql);
+            }
+        }
 
         $map = [
             'project_id' => $project_id,
             'field_name' => $field_name,
             'record_id'  => $record_id,
+            'pid1'       => $pids['pid1'] ?? null,
+            'pid2'       => $pids['pid2'] ?? null,
+            'pid3'       => $pids['pid3'] ?? null,
         ];
 
         $params = [];
         $piped = preg_replace_callback(
-            '/\[(project_id|field_name|record_id)\]/',
+            '/\[(project_id|field_name|record_id|pid1|pid2|pid3)\]/',
             function ($matches) use ($map, &$params) {
                 $params[] = $map[$matches[1]];
                 return '?';

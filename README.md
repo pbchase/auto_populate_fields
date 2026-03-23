@@ -26,6 +26,7 @@ In the project's External Modules configuration for Default From Query, add one 
 |-------|---------------|-------------|
 | **Query Name** | Any project administrator | A short identifier used to reference this query in action tags |
 | **SQL** | REDCap Admin only | A SQL statement that returns a single scalar value |
+| **Additional Project ID 1–3** (`pid1`, `pid2`, `pid3`) | Any project administrator | Optional project IDs for queries that need to reference data from other projects |
 
 ### 2. Enable the module on a project where it is needed. 
 
@@ -49,6 +50,8 @@ Queries may reference the following placeholders, which are substituted with the
 | `[project_id]` | The current project ID |
 | `[field_name]` | The name of the field being populated |
 | `[data-table]` | The REDCap data table for the current project (e.g. `redcap_data`) |
+| `[pid1]`, `[pid2]`, `[pid3]` | The project ID configured in the corresponding additional project ID field |
+| `[data-table:pid1]`, `[data-table:pid2]`, `[data-table:pid3]` | The REDCap data table for the corresponding additional project |
 
 Example:
 

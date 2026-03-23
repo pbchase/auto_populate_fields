@@ -39,6 +39,24 @@
                     "type": "textarea",
                     "required": true,
                     "super-users-only": true
+                },
+                {
+                    "key": "pid1",
+                    "name": "Additional Project ID 1 (pid1)",
+                    "type": "project-id",
+                    "required": false
+                },
+                {
+                    "key": "pid2",
+                    "name": "Additional Project ID 2 (pid2)",
+                    "type": "project-id",
+                    "required": false
+                },
+                {
+                    "key": "pid3",
+                    "name": "Additional Project ID 3 (pid3)",
+                    "type": "project-id",
+                    "required": false
                 }
             ]
         }
