@@ -5,7 +5,7 @@
  * Provides ExternalModule class for Default From Query.
  */
 
-namespace DefaultFromQuery\ExternalModule;
+namespace UF_CTSI\ExternalModule;
 
 use ExternalModules\AbstractExternalModule;
 use Form;

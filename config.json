@@ -1,6 +1,6 @@
 {
     "name": "Default From Query",
-    "namespace": "DefaultFromQuery\\ExternalModule",
+    "namespace": "UF_CTSI\\ExternalModule",
     "description": "Populates REDCap field default values by executing named SQL queries against the REDCap database. Queries are defined at the system level and referenced in field action tags as @DEFAULT-FROM-QUERY='query_name'.",
     "framework-version": 16,
     "compatibility": {
