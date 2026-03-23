@@ -55,7 +55,7 @@ class DefaultFromQuery extends AbstractExternalModule
                 continue;
             }
 
-            $sql = $this->getQueryByName($query_name, $project_id);
+            $sql = $this->getQueryByName($query_name);
             if ($sql === null) {
                 continue;
             }
@@ -74,17 +74,13 @@ class DefaultFromQuery extends AbstractExternalModule
      * Looks up the SQL for a named query associated with a project.
      *
      * @param string $query_name
-     * @param int $project_id
      * @return string|null The SQL string, or null if not found.
      */
-    function getQueryByName($query_name, $project_id)
+    function getQueryByName($query_name)
     {
         $queries = $this->getSubSettings('queries');
         foreach ($queries as $query) {
-            if (
-                $query['query_name'] === $query_name &&
-                (int) $query['query_project_id'] === (int) $project_id
-            ) {
+            if ($query['query_name'] === $query_name) {
                 return $query['query_sql'];
             }
         }

@@ -18,7 +18,7 @@ There is no automated test suite. Testing is manual using the REDCap instance:
 
 ## Architecture
 
-All backend logic lives in a single file: **`ExternalModule.php`**.
+All backend logic lives in a single file: **`DefaultFromQuery.php`**.
 
 The primary hook is:
 - `redcap_every_page_top()` — main entry point for data entry pages
@@ -27,14 +27,13 @@ The primary hook is:
 
 1. **`setDefaultValues()`** — The central method. Iterates project metadata, finds fields tagged with `@DEFAULT-FROM-QUERY`, looks up the named query from system settings, executes it against the REDCap database scoped to the current project, and injects the resulting value as the field default before REDCap renders the page.
 
-### System Settings
+### Project Settings
 
-Queries are stored as system-level (global) settings, not project settings. Each stored query has:
+Queries are stored as project-level settings. Each stored query has:
 - A **name** — used as the key in `@DEFAULT-FROM-QUERY='name'`
-- A **project ID** association — restricts which project the query applies to
 - A **SQL string** — executed against the REDCap database; must return a single scalar value
 
-### Key helper methods in ExternalModule.php
+### Key helper methods in DefaultFromQuery.php
 
 | Method | Purpose |
 |--------|---------|
@@ -54,7 +53,6 @@ Queries are stored at the **system level**, not as project settings. The system 
 | Key | Purpose |
 |-----|---------|
 | `query_name` | Identifier referenced in the action tag |
-| `query_project_id` | The REDCap project ID this query applies to |
 | `query_sql` | The SQL to execute; must return a single scalar value |
 
 ## Important Conventions

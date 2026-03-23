@@ -14,18 +14,17 @@ Default From Query is a REDCap External Module that allows REDCap fields to be a
 - Obtain this module from the Consortium [REDCap Repo](https://redcap.vumc.edu/consortium/modules/index.php) from the control center.
 - Go to **Control Center > Manage External Modules** and enable Default From Query.
 
-The module operates at the system level; there is no per-project configuration.
+- Enable the module for each project that needs it via the project's **Manage External Modules** page.
 
 ## Usage
 
-### 1. Define a query (system administrator)
+### 1. Define a query (project administrator)
 
-In the REDCap Control Center, External Modules Management, locate the Default From Query module and access its configuration. Add one or more query entries. Each entry requires:
+In the project's External Modules configuration for Default From Query, add one or more query entries. Each entry requires:
 
 | Field | Description |
 |-------|-------------|
 | **Query Name** | A short identifier used to reference this query in action tags |
-| **Project ID** | The REDCap project this query applies to |
 | **SQL** | A SQL statement that returns a single scalar value |
 
 ### 2. Enable the module on a project where it is needed. 

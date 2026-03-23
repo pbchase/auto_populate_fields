@@ -20,7 +20,7 @@
             "description": "Sets a field's default value by executing a named SQL query stored in the module's system settings. The query must be associated with the current project and must return a single value. Usage: @DEFAULT-FROM-QUERY='query_name'"
         }
     ],
-    "system-settings": [
+    "project-settings": [
         {
             "key": "queries",
             "name": "Queries",
@@ -31,12 +31,6 @@
                     "key": "query_name",
                     "name": "Query Name",
                     "type": "text",
-                    "required": true
-                },
-                {
-                    "key": "query_project_id",
-                    "name": "Project ID",
-                    "type": "project-id",
                     "required": true
                 },
                 {
