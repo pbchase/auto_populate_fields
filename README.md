@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.?????.svg)](https://doi.org/10.5281/zenodo.?????)
 
-Default From Query is a REDCap External Module that allows REDCap fields to be auto-populated with values derived from SQL queries against REDCap's own database. Queries are defined by a system administrator at the system level and referenced by name from a field's action tag.
+Default From Query is a REDCap External Module that allows REDCap fields to be auto-populated with values derived from SQL queries against REDCap's own database. Queries are defined by a system administrator at the project level and referenced by name from a field's action tag.
 
 ## Prerequisites
 
