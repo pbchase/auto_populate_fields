@@ -37,7 +37,8 @@
                     "key": "query_sql",
                     "name": "SQL",
                     "type": "textarea",
-                    "required": true
+                    "required": true,
+                    "super-users-only": true
                 }
             ]
         }

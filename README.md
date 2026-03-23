@@ -18,14 +18,14 @@ Default From Query is a REDCap External Module that allows REDCap fields to be a
 
 ## Usage
 
-### 1. Define a query (project administrator)
+### 1. Define a query
 
 In the project's External Modules configuration for Default From Query, add one or more query entries. Each entry requires:
 
-| Field | Description |
-|-------|-------------|
-| **Query Name** | A short identifier used to reference this query in action tags |
-| **SQL** | A SQL statement that returns a single scalar value |
+| Field | Who can set it | Description |
+|-------|---------------|-------------|
+| **Query Name** | Any project administrator | A short identifier used to reference this query in action tags |
+| **SQL** | REDCap Admin only | A SQL statement that returns a single scalar value |
 
 ### 2. Enable the module on a project where it is needed. 
 
