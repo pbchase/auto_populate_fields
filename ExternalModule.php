@@ -97,7 +97,11 @@ class ExternalModule extends AbstractExternalModule
      *
      * Each placeholder occurrence is replaced with a ? and the corresponding
      * value is appended to the returned params array in order, making the
-     * output safe for use with a prepared statement.
+     * output safe for use with a prepared statement. The [data-table]
+     * placeholder is an exception: it is substituted directly as a table name
+     * and cannot be bound as a parameter.
+     *
+     * Supported placeholders: [record_id], [project_id], [field_name], [data-table].
      *
      * @param string $sql        The raw SQL string containing placeholders.
      * @param int    $project_id The current REDCap project ID.
@@ -107,6 +111,10 @@ class ExternalModule extends AbstractExternalModule
      */
     function pipeSqlVariables($sql, $project_id, $field_name, $record_id)
     {
+        // [data-table] is a table name and cannot be a bound parameter, so
+        // substitute it directly before building the prepared statement.
+        $sql = str_replace('[data-table]', $this->getDataTable($project_id), $sql);
+
         $map = [
             'project_id' => $project_id,
             'field_name' => $field_name,

@@ -49,6 +49,7 @@ Queries may reference the following placeholders, which are substituted with the
 | `[record_id]` | The current record ID |
 | `[project_id]` | The current project ID |
 | `[field_name]` | The name of the field being populated |
+| `[data-table]` | The REDCap data table for the current project (e.g. `redcap_data`) |
 
 Example:
 
